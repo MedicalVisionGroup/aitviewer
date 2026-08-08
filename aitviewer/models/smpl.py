@@ -35,7 +35,7 @@ class SMPLLayer(nn.Module, ABC):
         :param smpl_model_params: Other keyword arguments that can be passed to smplx.create.
         """
         assert model_type in ["smpl", "smplh", "smplx", "mano", "flame"]
-        assert gender in ["male", "female", "neutral"]
+        assert gender in ["male", "female", "neutral", "infant"]
         if model_type == "smplh" and gender == "neutral":
             gender = "female"  # SMPL-H has no neutral gender.
 
@@ -45,6 +45,8 @@ class SMPLLayer(nn.Module, ABC):
         smpl_model_params["use_pca"] = smpl_model_params.get("use_pca", False)
         smpl_model_params["flat_hand_mean"] = smpl_model_params.get("flat_hand_mean", True)
 
+        fetal_smpl_data_dict_path = smpl_model_params.pop("fetal_smpl_data_dict_path", None)
+
         self.bm = smplx.create(
             C.smplx_models,
             model_type=model_type,
@@ -52,6 +54,11 @@ class SMPLLayer(nn.Module, ABC):
             gender=gender,
             **smpl_model_params,
         )
+
+        if fetal_smpl_data_dict_path is not None:
+            from smplx.fetal_smil import utils
+
+            utils.set_smil_model_to_fetal_smpl(self.bm, fetal_smpl_data_dict_path)
 
         if device is None:
             device = C.device

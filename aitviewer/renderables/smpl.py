@@ -98,7 +98,7 @@ class SMPLSequence(Node):
         if dtype is None:
             dtype = C.f_precision
 
-        super(SMPLSequence, self).__init__(n_frames=poses_body.shape[0], icon=icon, gui_material=False, **kwargs)
+        super(SMPLSequence, self).__init__(n_frames=poses_body.shape[0], icon=icon, gui_material=True, **kwargs)
 
         self.smpl_layer = smpl_layer
         self.post_fk_func = post_fk_func
